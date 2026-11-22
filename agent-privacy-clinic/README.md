@@ -6,11 +6,11 @@ A five-minute checkup for AI agents that touch personal data. Part of the [Priva
 
 Answer yes or no for one agent. See [`CHECKLIST.md`](CHECKLIST.md) for the full wording and what each check means.
 
-1. A stated purpose travels with every request
-2. Each tool returns only the fields that purpose needs
-3. Each action leaves a record of classes and hashes, never personal values
-4. Records are tamper-evident
-5. The agent earned production access on synthetic data first
+1. **Purpose.** Every request carries a purpose, checked at each tool call.
+2. **Minimization.** Each tool returns only the fields that purpose needs.
+3. **Record.** A record is written for every action, including denied ones, without storing the data itself.
+4. **Approval.** A person approves writes and sends that leave your boundary.
+5. **Sandbox.** The agent ran on synthetic data with real business rules before real data.
 
 ## What is here
 
