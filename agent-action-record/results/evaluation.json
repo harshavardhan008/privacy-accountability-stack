@@ -1,0 +1,78 @@
+{
+  "setup": {
+    "synthetic_customers": 200,
+    "fields_per_customer": 8,
+    "seed": 2026
+  },
+  "A_wide_tool_scope": {
+    "naive_excess_fields_per_call": 6.0,
+    "gateway_excess_fields_per_call": 0.0,
+    "needed_fields_delivered_pct": 100.0,
+    "legitimate_requests_denied": 0
+  },
+  "B_context_carry_over": {
+    "naive_requests_exposed_to_other_customer": 199,
+    "gateway_requests_exposed_to_other_customer": 0,
+    "gateway_cross_request_reads_denied": 199,
+    "requests": 200
+  },
+  "C_summaries_as_copies": {
+    "naive_leaked_values_per_summary": {
+      "ticket_system": 6.0,
+      "vendor_helpdesk": 7.0,
+      "notes_unclassified": 8.0
+    },
+    "gateway_leaked_values_per_summary": {
+      "ticket_system": 0.0,
+      "vendor_helpdesk": 0.0,
+      "notes_unclassified": 0.0
+    },
+    "sink_redactions_per_summary": {
+      "ticket_system": 2.0,
+      "vendor_helpdesk": 3.0,
+      "notes_unclassified": 4.0
+    }
+  },
+  "D_lost_purpose_handoff": {
+    "naive_widened_handoffs_accepted_pct": 100.0,
+    "gateway_widened_handoffs_accepted_pct": 0.0,
+    "gateway_widened_handoffs_denied": 100,
+    "gateway_benign_handoffs_accepted": 100,
+    "benign_handoffs": 100
+  },
+  "tamper_evidence": {
+    "edit_field": {
+      "trials": 200,
+      "detected_without_anchor": 200,
+      "detected_with_anchor": 200
+    },
+    "delete_middle": {
+      "trials": 200,
+      "detected_without_anchor": 200,
+      "detected_with_anchor": 200
+    },
+    "swap_two": {
+      "trials": 200,
+      "detected_without_anchor": 200,
+      "detected_with_anchor": 200
+    },
+    "truncate_tail": {
+      "trials": 200,
+      "detected_without_anchor": 0,
+      "detected_with_anchor": 200
+    },
+    "rewrite_chain": {
+      "trials": 200,
+      "detected_without_anchor": 0,
+      "detected_with_anchor": 200
+    }
+  },
+  "overhead": {
+    "calls": 20000,
+    "direct_tool_us": 0.3,
+    "gateway_memory_ledger_us": 37.7,
+    "gateway_file_ledger_us": 53.4,
+    "python": "3.13.18",
+    "machine": "x86_64"
+  }
+}

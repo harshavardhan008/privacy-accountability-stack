@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-action-record"
+version = "0.1.0"
+description = "Purpose-aware accountability for AI agents that touch personal data: action record, purpose gateway, tamper-evident ledger, graduation ladder, readiness scorecard."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Harshavardhan Peddireddy" }]
+keywords = ["ai agents", "privacy engineering", "accountability", "audit", "governance"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+aar = "aar.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "."]

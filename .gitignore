@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+*.jsonl
+!agent-action-record/results/*.jsonl
+agent-action-record/results/_bench_ledger.jsonl
+scorecard_qr.png
+.DS_Store

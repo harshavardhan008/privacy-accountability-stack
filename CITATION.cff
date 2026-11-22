@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Privacy Accountability Stack: agent-action-record and Agent Privacy Clinic"
+abstract: "Reference implementation for Beyond the Pipeline: Runtime Privacy Accountability for Enterprise AI Agents (ETIC 2026). Extends the privacy accountability stack from training-time data to runtime AI agents."
+version: 0.1.0
+date-released: 2026-11-22
+license: MIT
+type: software
+repository-code: "https://github.com/harshavardhan008/privacy-accountability-stack"
+authors:
+  - family-names: Peddireddy
+    given-names: Harshavardhan
+keywords:
+  - AI agents
+  - privacy engineering
+  - accountability
+  - AI governance
+  - audit logging
+  - purpose limitation
+  - synthetic data

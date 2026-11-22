@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent Privacy Readiness Check</title>
+<style>
+  :root { --ink:#0b1b2e; --muted:#51627a; --line:#d5dde8; --accent:#0a66d6; --ok:#0a8a5a; --warn:#b26a00; --bg:#f6f8fb; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:17px/1.5 system-ui, -apple-system, "Segoe UI", Calibri, sans-serif; color:var(--ink); background:var(--bg); }
+  main { max-width: 680px; margin: 0 auto; padding: 24px 18px 48px; }
+  h1 { font-size: 26px; margin: 8px 0 4px; }
+  p.lead { color:var(--muted); margin-top:0; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin:14px 0; }
+  .q { display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--line); }
+  .q:last-child { border-bottom:0; }
+  .q input { width:22px; height:22px; margin-top:3px; flex:none; }
+  .q label { cursor:pointer; }
+  .q b { display:block; }
+  .q span { color:var(--muted); font-size:15px; }
+  fieldset { border:0; padding:0; margin:0; }
+  legend { font-weight:600; margin-bottom:6px; }
+  .row { display:flex; flex-wrap:wrap; gap:14px; }
+  select, button { font:inherit; padding:9px 12px; border-radius:8px; border:1px solid var(--line); background:#fff; }
+  button.primary { background:var(--accent); color:#fff; border-color:var(--accent); cursor:pointer; }
+  button:focus-visible, input:focus-visible, select:focus-visible { outline:3px solid #8bb9f5; outline-offset:2px; }
+  #result { display:none; }
+  .score { font-size:44px; font-weight:700; line-height:1; }
+  .band { font-weight:600; }
+  code { background:#eef2f8; padding:3px 7px; border-radius:6px; word-break:break-all; font-size:15px; }
+  ul { padding-left: 20px; margin: 6px 0; }
+  .small { font-size:14px; color:var(--muted); }
+  .consent { font-size:14px; color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Agent Privacy Readiness Check</h1>
+  <p class="lead">Five questions, one minute. Think of one AI agent your team runs or plans to run on personal data.</p>
+
+  <p class="consent card">This check is anonymous. It stores nothing on this page and sends nothing unless you choose to submit your result code. The code contains your five answers, your agent status, and your role, and nothing that identifies you or your organization. Submitted codes are summarized in aggregate and may appear in a talk, a paper, or a report. You can use the page without submitting.</p>
+
+  <form id="f" class="card" autocomplete="off">
+    <div id="questions"></div>
+  </form>
+
+  <div class="card row">
+    <fieldset>
+      <legend>Where is this agent today?</legend>
+      <select id="status" aria-label="Agent status">
+        <option value="none">Not built yet</option>
+        <option value="pilot" selected>Pilot or testing</option>
+        <option value="production">In production</option>
+      </select>
+    </fieldset>
+    <fieldset>
+      <legend>Your role (optional)</legend>
+      <select id="role" aria-label="Role">
+        <option value="other">Other</option>
+        <option value="engineer">Engineer</option>
+        <option value="security">Security</option>
+        <option value="privacy">Privacy or legal</option>
+        <option value="product">Product</option>
+        <option value="leader">Leader</option>
+        <option value="researcher">Researcher or student</option>
+      </select>
+    </fieldset>
+  </div>
+
+  <button class="primary" id="go" type="button">Get my score</button>
+
+  <section id="result" class="card" aria-live="polite">
+    <div class="score"><span id="scoreNum">0</span> / 5</div>
+    <p class="band" id="band"></p>
+    <p><b>Still open:</b></p>
+    <ul id="gaps"></ul>
+    <p><b>Your result code</b><br><code id="code"></code></p>
+    <p>
+      <button type="button" id="copy">Copy code</button>
+      <button type="button" id="submit" hidden>Submit anonymously</button>
+    </p>
+    <p class="small">A score describes controls, not outcomes. A five does not mean nothing can leak.</p>
+  </section>
+</main>
+
+<script>
+// Set this to a form that accepts one text field. Use {code} where the result code goes.
+// Example: "https://forms.gle/XXXX?entry.123456={code}". Leave empty to show copy only.
+const SUBMIT_URL = "";
+
+// Keep in sync with src/aar/scorecard.py (QUESTIONS, STATUSES, PREFIX).
+const PREFIX = "AAR1";
+const QUESTIONS = [
+  { key: "purpose",      title: "Purpose",      text: "The purpose of each request is checked at the tool call.", gap: "Carry a purpose with every request and check it at each tool call." },
+  { key: "minimization", title: "Minimization", text: "Each tool returns only the fields that purpose needs.",     gap: "Strip fields the purpose does not need before the agent sees them." },
+  { key: "record",       title: "Record",       text: "A record is written for every agent action, including denied ones.", gap: "Write a record per action, with data classes and hashes, not the data." },
+  { key: "approval",     title: "Approval",     text: "A person approves writes and sends that leave your boundary.",       gap: "Require human approval for writes and sends to outside systems." },
+  { key: "sandbox",      title: "Sandbox",      text: "The agent ran on synthetic data before touching real data.",          gap: "Test on synthetic customers with real business rules first." }
+];
+
+const qs = document.getElementById("questions");
+QUESTIONS.forEach(q => {
+  const d = document.createElement("div");
+  d.className = "q";
+  d.innerHTML = '<input type="checkbox" id="q_' + q.key + '"><label for="q_' + q.key + '"><b>' + q.title + '</b><span>' + q.text + '</span></label>';
+  qs.appendChild(d);
+});
+
+function compute() {
+  const answers = QUESTIONS.map(q => document.getElementById("q_" + q.key).checked);
+  const score = answers.filter(Boolean).length;
+  const bits = answers.map(a => a ? "1" : "0").join("");
+  const status = document.getElementById("status").value;
+  const role = document.getElementById("role").value;
+  return { answers, score, code: [PREFIX, status, bits, role].join("|") };
+}
+
+function band(score) {
+  if (score <= 1) return "Running on trust. A request can go wrong with no evidence left behind.";
+  if (score <= 3) return "Some controls exist. A request can still go wrong without leaving proof.";
+  return "You can likely answer an auditor. Next, test the controls.";
+}
+
+document.getElementById("go").addEventListener("click", () => {
+  const r = compute();
+  document.getElementById("scoreNum").textContent = r.score;
+  document.getElementById("band").textContent = band(r.score);
+  const gaps = document.getElementById("gaps");
+  gaps.innerHTML = "";
+  QUESTIONS.forEach((q, i) => { if (!r.answers[i]) { const li = document.createElement("li"); li.textContent = q.gap; gaps.appendChild(li); } });
+  if (!gaps.children.length) { const li = document.createElement("li"); li.textContent = "All five in place."; gaps.appendChild(li); }
+  document.getElementById("code").textContent = r.code;
+  document.getElementById("result").style.display = "block";
+  if (SUBMIT_URL) document.getElementById("submit").hidden = false;
+  document.getElementById("result").scrollIntoView({ behavior: "smooth" });
+});
+
+document.getElementById("copy").addEventListener("click", () => {
+  const code = document.getElementById("code").textContent;
+  if (navigator.clipboard) navigator.clipboard.writeText(code);
+  document.getElementById("copy").textContent = "Copied";
+});
+
+document.getElementById("submit").addEventListener("click", () => {
+  const code = document.getElementById("code").textContent;
+  window.open(SUBMIT_URL.replace("{code}", encodeURIComponent(code)), "_blank", "noopener");
+});
+</script>
+</body>
+</html>

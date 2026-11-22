@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Action Record v0.1",
+  "description": "Minimum record written for every agent action. Never contains personal data values.",
+  "type": "object",
+  "required": ["request_id", "delegator", "agent_id", "agent_version", "purpose", "tool", "operation",
+               "data_classes", "consent_ref", "approval", "destination", "retention_days", "decision", "reason"],
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {"type": "string", "minLength": 1},
+    "delegator": {"type": "string", "minLength": 1},
+    "agent_id": {"type": "string", "minLength": 1},
+    "agent_version": {"type": "string"},
+    "purpose": {"type": "string", "minLength": 1},
+    "tool": {"type": "string", "minLength": 1},
+    "operation": {"enum": ["read", "write", "send", "handoff", "memory"]},
+    "data_classes": {"type": "array", "items": {"type": "string"}},
+    "consent_ref": {"type": "string", "minLength": 1},
+    "approval": {"type": ["string", "null"]},
+    "destination": {"type": "string"},
+    "retention_days": {"type": "integer", "minimum": 0},
+    "decision": {"enum": ["allow", "minimized", "deny"]},
+    "reason": {"type": "string"},
+    "environment": {"enum": ["sandbox", "shadow", "limited", "production"]},
+    "subject_ref": {"type": ["string", "null"]},
+    "parent_record_id": {"type": ["string", "null"]},
+    "input_hash": {"type": "string"},
+    "output_hash": {"type": "string"},
+    "record_id": {"type": "string"},
+    "timestamp": {"type": "number"}
+  }
+}
