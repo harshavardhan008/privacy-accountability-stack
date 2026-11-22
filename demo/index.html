@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live demo | Privacy Accountability Stack</title>
+<meta name="description" content="Watch a purpose gateway control what an AI agent can do with personal data. Runs the real agent-action-record code in your browser on synthetic data.">
+<style>
+:root{--bg:#07131f;--panel:#0d2238;--edge:#1c3a57;--text:#eaf2fa;--mute:#9db3c8;--cyan:#2de2c0;--blue:#3b82f6;--amber:#f5b942;--red:#ff6b6b;--green:#2de2c0}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--cyan)}
+header,main,footer{max-width:1180px;margin:0 auto;padding:0 20px}
+header{padding-top:28px}
+.back{font-size:14px;text-decoration:none}
+h1{font-size:clamp(28px,4vw,40px);line-height:1.15;margin:14px 0 8px}
+.lead{color:var(--mute);max-width:760px;margin:0 0 6px}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+.pill{border:1px solid var(--edge);border-radius:999px;padding:3px 12px;font-size:13px;color:var(--mute)}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0 14px}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--text);padding:9px 16px}
+button.primary{background:var(--cyan);color:#05211c;border-color:var(--cyan);font-weight:600}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,a:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+#status{color:var(--mute);font-size:14px}
+.grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:22px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--edge);border-radius:14px;padding:18px 20px;margin-bottom:14px}
+.card.locked{opacity:.55}
+.step-head{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:30px;height:30px;border-radius:50%;background:#0a3a46;color:var(--cyan);display:grid;place-items:center;font-weight:700}
+.card h2{font-size:18px;margin:0 0 2px}
+.card p{margin:2px 0 0;color:var(--mute);font-size:15px}
+.result{margin-top:14px;border-top:1px solid var(--edge);padding-top:12px}
+.ev{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center;margin:8px 0;font-size:15px}
+.tag{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:6px;padding:2px 8px;border:1px solid}
+.allow{color:var(--green);border-color:var(--green)}
+.minimized{color:var(--amber);border-color:var(--amber)}
+.deny{color:var(--red);border-color:var(--red)}
+.reason{color:var(--mute);font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.note{background:#0a1b2d;border-left:3px solid var(--cyan);padding:8px 12px;border-radius:6px;margin-top:10px;font-size:15px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+@media(max-width:600px){.two{grid-template-columns:1fr}}
+.box{background:#0a1b2d;border:1px solid var(--edge);border-radius:10px;padding:10px 12px;font-size:14px}
+.box h3{margin:0 0 6px;font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+.chip{display:inline-block;border:1px solid var(--edge);border-radius:6px;padding:1px 8px;margin:2px 4px 2px 0;font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace}
+pre{margin:6px 0 0;white-space:pre-wrap;word-break:break-word;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;background:#06101a;border:1px solid var(--edge);border-radius:8px;padding:8px 10px}
+.redact{color:var(--amber);font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+td,th{text-align:left;padding:5px 6px;border-bottom:1px solid var(--edge)}
+.side{position:sticky;top:12px}
+@media(max-width:900px){.side{position:static}}
+.led{border:1px solid var(--edge);border-radius:10px;margin:6px 0;background:#0a1b2d}
+.led summary{cursor:pointer;padding:8px 10px;list-style:none;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px}
+.led summary::-webkit-details-marker{display:none}
+.led .i{color:var(--mute);width:22px}
+.led pre{margin:0 10px 10px}
+.empty{color:var(--mute);font-size:14px}
+.tamper{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+footer{padding:28px 20px 48px;color:var(--mute);font-size:14px}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../">&larr; Privacy Accountability Stack</a>
+  <h1>Watch a gateway control what an AI agent does with personal data</h1>
+  <p class="lead">A support agent is fixing a customer's missing loyalty points. Step through six moments from the talk and see what the purpose gateway allows, trims, or denies, and what the audit trail records. This runs the real <code>agent-action-record</code> code in your browser.</p>
+  <div class="badge-row">
+    <span class="pill">All data is synthetic</span>
+    <span class="pill">Runs in your browser, nothing is sent anywhere</span>
+    <span class="pill">Loads the Python runtime from cdn.jsdelivr.net</span>
+  </div>
+  <div class="bar">
+    <button class="primary" id="next" disabled>Run next step</button>
+    <button id="all" disabled>Run all</button>
+    <button id="reset" disabled>Reset</button>
+    <span id="status" role="status" aria-live="polite">Loading the Python runtime. This takes a few seconds.</span>
+  </div>
+</header>
+<main>
+  <div class="grid">
+    <section id="steps" aria-label="Steps"></section>
+    <aside class="side" aria-label="Ledger">
+      <div class="card">
+        <h2>The ledger</h2>
+        <p>One Action Record per action, including denied ones. Click a record to see it. Records hold data classes and hashes, never the values.</p>
+        <div id="ledger"><p class="empty">No actions yet.</p></div>
+      </div>
+    </aside>
+  </div>
+</main>
+<footer>
+  This is a reference implementation for study, not a production security boundary. Limits are documented in
+  <a href="https://github.com/harshavardhan008/privacy-accountability-stack/blob/main/agent-action-record/docs/ARCHITECTURE.md">ARCHITECTURE.md</a>.
+  Part of the <a href="../">Privacy Accountability Stack</a>, the reference implementation for <em>Beyond the Pipeline: Runtime Privacy Accountability for Enterprise AI Agents</em>.
+</footer>
+<script>
+const STEPS = [
+  ["The agent looks up the customer", "It asks for the whole customer record."],
+  ["The agent tries to add points", "First without a person approving, then with the rep's approval."],
+  ["The agent hands the case to another agent", "One handoff quietly widens the purpose. The other keeps it."],
+  ["The agent writes down what it learned", "A summary goes into an internal ticket. A fraud review pastes notes into a vendor tool."],
+  ["The customer withdraws consent", "Where did their data go?"],
+  ["The audit trail", "What happened, in order, and can you trust the record?"]
+];
+const PYODIDE = "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/";
+const AAR = ["__init__.py","consent.py","gateway.py","ledger.py","record.py","lineage.py","ladder.py"];
+let py = null, run = null, done = 0, busy = false;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const chips = a => (a && a.length ? a.map(x => `<span class="chip">${esc(x)}</span>`).join("") : `<span class="reason">none</span>`);
+const call = (op, arg) => JSON.parse(run(op, arg === undefined ? null : String(arg)));
+
+function buildSteps(){
+  $("steps").innerHTML = STEPS.map((s,i) => `
+    <article class="card locked" id="card${i+1}">
+      <div class="step-head"><div class="num">${i+1}</div>
+        <div><h2>${esc(s[0])}</h2><p>${esc(s[1])}</p></div></div>
+      <div class="result" id="res${i+1}" hidden></div>
+    </article>`).join("");
+}
+
+function events(list){
+  return (list||[]).map(e => `<div class="ev"><span class="tag ${e.decision}">${e.decision}</span>
+    <div>${esc(e.label)} <span class="reason">${esc(e.reason)}</span></div></div>`).join("");
+}
+function note(t){ return t ? `<div class="note">${esc(t)}</div>` : ""; }
+function redactHtml(t){ return esc(t).replace(/\[REDACTED:[a-z]+\]/g, m => `<span class="redact">${m}</span>`); }
+
+function render(n, r){
+  let h = events(r.events);
+  if (n === 1){
+    const got = Object.entries(r.released_data).map(([k,v]) => `<div><span class="chip">${esc(k)}</span> ${esc(v)}</div>`).join("");
+    const gone = r.withheld.map(w => `<span class="chip">${esc(w.field)} (${esc(w.class)})</span>`).join("");
+    h += `<div class="two"><div class="box"><h3>The agent received</h3>${got}</div>
+      <div class="box"><h3>Removed by the gateway</h3>${gone}</div></div>`;
+  }
+  if (n === 4){
+    h += r.stored.map(s => `<div class="box" style="margin-top:10px"><h3>Stored in: ${esc(s.where)}</h3><pre>${redactHtml(s.text)}</pre></div>`).join("");
+  }
+  if (n === 5){
+    h += `<div class="box" style="margin-top:10px"><h3>Earlier actions that released this customer's data</h3>` +
+      (r.impact.length ? `<table><tr><th>Tool</th><th>Data classes</th><th>Went to</th></tr>` +
+        r.impact.map(x => `<tr><td>${esc(x.tool)}</td><td>${chips(x.classes)}</td><td>${esc(x.destination)}</td></tr>`).join("") + `</table>`
+        : `<p class="empty">None.</p>`) + `</div>`;
+  }
+  if (n === 6){
+    h += `<div class="box" style="margin-top:10px"><h3>Request req-001, in order</h3><table><tr><th>Action</th><th>Decision</th><th>Data classes</th></tr>` +
+      r.trace.map(t => `<tr><td style="padding-left:${6 + t.depth*18}px">${esc(t.tool)}</td><td><span class="tag ${t.decision}">${t.decision}</span></td><td>${chips(t.classes)}</td></tr>`).join("") + `</table></div>`;
+    h += `<div class="box" style="margin-top:10px"><h3>Is the record trustworthy?</h3>
+      <div>Hash chain over ${r.chain.length} records: <strong>${esc(r.chain.message)}</strong></div>
+      <div class="reason">head ${esc((r.chain.head||"").slice(0,24))}...</div>
+      <div style="margin-top:8px">Try to tamper with it:</div>
+      <div class="tamper">
+        <button data-t="edit">Edit a record</button>
+        <button data-t="delete">Delete a record</button>
+        <button data-t="truncate">Cut off the end</button>
+      </div><div id="tout" aria-live="polite"></div></div>`;
+  }
+  h += note(r.note);
+  const el = $("res"+n); el.innerHTML = h; el.hidden = false;
+  if (n === 6) el.querySelectorAll("[data-t]").forEach(b => b.onclick = () => tamper(b.dataset.t));
+}
+
+function tamper(kind){
+  const r = call("tamper", kind), out = $("tout");
+  const line = x => `<span class="tag ${x.ok ? "allow" : "deny"}">${x.ok ? "not detected" : "detected"}</span> <span class="reason">${esc(x.message)}</span>`;
+  if (r.error){ out.innerHTML = `<div class="note">${esc(r.error)}</div>`; return; }
+  if (kind === "truncate"){
+    out.innerHTML = `<div class="ev"><div></div><div>${esc(r.what)}</div></div>
+      <div class="ev"><div>${line(r.without_anchor)}</div><div>without a saved copy of the head hash</div></div>
+      <div class="ev"><div>${line(r.with_anchor)}</div><div>with the head hash saved elsewhere</div></div>
+      <div class="note">Cutting records off the end is invisible unless you saved the head hash somewhere else, such as a ticket or a signed email. This is a documented limit of a hash chain on its own.</div>`;
+  } else {
+    out.innerHTML = `<div class="ev"><div></div><div>${esc(r.what)}</div></div>
+      <div class="ev"><div>${line(r.result)}</div><div>${r.result.index === null ? "" : "at record " + (r.result.index + 1)}</div></div>`;
+  }
+}
+
+function renderLedger(){
+  const rows = call("ledger");
+  $("ledger").innerHTML = rows.length ? rows.map(x => `<details class="led"><summary>
+      <span class="i">${x.i+1}</span><span class="tag ${x.decision}">${x.decision}</span>
+      <span>${esc(x.tool)}</span><span class="reason">${esc(x.hash)}</span></summary>
+      <pre>${esc(JSON.stringify(x.body, null, 2))}</pre></details>`).join("")
+    : `<p class="empty">No actions yet.</p>`;
+}
+
+function sync(){
+  for (let i = 1; i <= STEPS.length; i++){
+    const c = $("card"+i);
+    c.classList.toggle("locked", i > done + 1);
+  }
+  $("next").disabled = busy || done >= STEPS.length;
+  $("all").disabled = busy || done >= STEPS.length;
+  $("reset").disabled = busy;
+  $("next").textContent = done >= STEPS.length ? "All steps run" : `Run step ${done+1}`;
+}
+
+function runNext(){
+  if (done >= STEPS.length) return;
+  const n = done + 1, r = call("step", n);
+  if (r.error){ $("status").textContent = r.error; return; }
+  done = n; render(n, r); renderLedger(); sync();
+  $("card"+n).scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+
+function reset(){
+  call("reset"); done = 0; buildSteps(); renderLedger(); sync();
+  $("status").textContent = "Reset. Fresh synthetic data.";
+}
+
+async function boot(){
+  buildSteps();
+  try{
+    await new Promise((ok, bad) => { const s = document.createElement("script"); s.src = PYODIDE + "pyodide.js"; s.onload = ok; s.onerror = () => bad(new Error("Could not load the Python runtime from cdn.jsdelivr.net")); document.head.appendChild(s); });
+    py = await loadPyodide({indexURL: PYODIDE});
+    const base = new URL("../agent-action-record/", location.href);
+    py.FS.mkdirTree("/home/pyodide/aar");
+    const get = async u => { const r = await fetch(u); if (!r.ok) throw new Error("Could not load " + u); return r.text(); };
+    const files = await Promise.all([
+      ...AAR.map(async f => [`/home/pyodide/aar/${f}`, await get(new URL("src/aar/" + f, base))]),
+      get(new URL("examples/shared.py", base)).then(t => ["/home/pyodide/demo_shared.py", t]),
+      get(new URL("harness.py", location.href)).then(t => ["/home/pyodide/harness.py", t])
+    ]);
+    files.forEach(([p, t]) => py.FS.writeFile(p, t));
+    py.runPython("import sys\nif '/home/pyodide' not in sys.path: sys.path.insert(0,'/home/pyodide')\nimport harness");
+    run = py.pyimport("harness").run;
+    $("status").textContent = "Ready. Run step 1.";
+    sync();
+  }catch(e){
+    $("status").textContent = "Could not start the demo: " + e.message + ". You can still run it locally, see the repository README.";
+  }
+}
+$("next").onclick = runNext;
+$("all").onclick = () => { busy = true; sync(); while (done < STEPS.length) runNext(); busy = false; sync(); };
+$("reset").onclick = reset;
+boot();
+</script>
+</body>
+</html>

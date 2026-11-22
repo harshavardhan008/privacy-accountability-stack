@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Accountability Stack | Beyond the Pipeline</title>
+<meta name="description" content="Privacy accountability for enterprise AI, from training data to runtime AI agents. Live demo, readiness checkup, and open-source reference implementation by Harshavardhan Peddireddy.">
+<meta property="og:title" content="Privacy Accountability Stack">
+<meta property="og:description" content="Beyond the Pipeline: Runtime Privacy Accountability for Enterprise AI Agents. Live demo, checkup, and open source code.">
+<style>
+:root{--bg:#07131f;--panel:#0d2238;--edge:#1c3a57;--text:#eaf2fa;--mute:#9db3c8;--cyan:#2de2c0;--blue:#3b82f6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--cyan)}
+a:focus-visible,.card:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+.hero{padding:64px 0 28px;border-bottom:1px solid var(--edge)}
+.eyebrow{color:var(--cyan);font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+h1{font-size:clamp(34px,6vw,60px);line-height:1.08;margin:10px 0 12px}
+.sub{font-size:clamp(18px,2.4vw,24px);color:var(--mute);max-width:760px;margin:0}
+.idea{margin:26px 0 0;max-width:780px;font-size:19px}
+.idea strong{color:var(--cyan)}
+h2{font-size:24px;margin:44px 0 14px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:860px){.cards{grid-template-columns:1fr}}
+.card{display:block;background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:22px;text-decoration:none;color:var(--text);transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--cyan);transform:translateY(-2px)}
+.card h3{margin:0 0 6px;font-size:20px}
+.card p{margin:0;color:var(--mute);font-size:15.5px}
+.go{display:inline-block;margin-top:12px;color:var(--cyan);font-weight:600;font-size:15px}
+table{width:100%;border-collapse:collapse;font-size:15.5px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--edge);vertical-align:top}
+th{color:var(--mute);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+.tablewrap{overflow-x:auto;border:1px solid var(--edge);border-radius:14px;background:var(--panel)}
+.leaks{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0;list-style:none;margin:0}
+@media(max-width:700px){.leaks{grid-template-columns:1fr}}
+.leaks li{background:var(--panel);border:1px solid var(--edge);border-radius:12px;padding:14px 16px;font-size:15.5px}
+.leaks b{color:var(--cyan)}
+.pubs{padding-left:20px;color:var(--mute)}
+.pubs li{margin:8px 0}.pubs span{color:var(--text)}
+.honest{color:var(--mute);font-size:15px;max-width:760px}
+footer{margin-top:56px;padding:26px 0 48px;border-top:1px solid var(--edge);color:var(--mute);font-size:14.5px}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Privacy Accountability Stack</div>
+    <h1>Beyond the Pipeline</h1>
+    <p class="sub">Runtime Privacy Accountability for Enterprise AI Agents</p>
+    <p class="idea">Identity tells you who the agent is. Security tells you what could go wrong. <strong>Privacy accountability tells you why the agent may touch this person's data, and whether you can prove it later.</strong></p>
+  </section>
+
+  <h2>Start here</h2>
+  <div class="cards">
+    <a class="card" href="demo/">
+      <h3>Live demo</h3>
+      <p>Step through six moments with a support agent and watch a purpose gateway allow, trim, or deny each action. Runs the real code in your browser.</p>
+      <span class="go">Open the demo &rarr;</span>
+    </a>
+    <a class="card" href="agent-privacy-clinic/">
+      <h3>Agent Privacy Clinic</h3>
+      <p>A one-minute, anonymous checkup. Five yes or no questions about one AI agent that touches personal data.</p>
+      <span class="go">Take the checkup &rarr;</span>
+    </a>
+    <a class="card" href="https://github.com/harshavardhan008/privacy-accountability-stack">
+      <h3>Code and docs</h3>
+      <p>Open source, MIT licensed, standard library only, 42 tests. Includes the Action Record specification.</p>
+      <span class="go">View on GitHub &rarr;</span>
+    </a>
+  </div>
+
+  <h2>The stack</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Layer</th><th>Question it answers</th><th>At runtime for AI agents</th></tr>
+    <tr><td>0. Synthetic data</td><td>Can we build and test without real personal data?</td><td>Graduation ladder: an agent earns production access on synthetic data first</td></tr>
+    <tr><td>1. Lineage</td><td>Where did this data come from and where did it go?</td><td>Action Lineage across handoffs</td></tr>
+    <tr><td>2. Consent and minimization</td><td>Was this use allowed, and only what was needed?</td><td>Purpose Pass and purpose gateway</td></tr>
+    <tr><td>3. Audit</td><td>Can we prove what happened?</td><td>Action Record and tamper-evident ledger</td></tr>
+    <tr><td>4. Regulatory alignment</td><td>Does this map to the rules that apply?</td><td>Records mapped to GDPR and EU AI Act duties</td></tr>
+  </table></div>
+
+  <h2>Four quiet leaks</h2>
+  <ul class="leaks">
+    <li><b>Wide tool scope.</b> The agent can read far more than the task needs.</li>
+    <li><b>Context carry-over.</b> Data from one request shows up in the next.</li>
+    <li><b>Summaries become new copies.</b> A ticket or note holds personal data nobody tracked.</li>
+    <li><b>Lost purpose in handoffs.</b> The next agent does not know why it may touch the data.</li>
+  </ul>
+
+  <h2>Publications</h2>
+  <ul class="pubs">
+    <li><span>Beyond the Pipeline: Runtime Privacy Accountability for Enterprise AI Agents.</span> ETIC 2026, Los Angeles, December 11-12, 2026.</li>
+    <li><span>AI-driven data privacy and sustainable computing: An accountability stack for responsible enterprise AI.</span> GICITE 2026, TU Berlin.</li>
+    <li><span>An Integrated AI Based Framework for Regulatory Governance and Privacy-Preserving Data Protection in Enterprise Systems.</span> CICN 2026. <a href="https://doi.org/10.1109/cicn70047.2026.11594247">doi</a></li>
+    <li><span>Privacy-Preserving AI: Synthetic Data, Federated Learning, and the Future of Responsible Enterprise Intelligence.</span> SHORAM Editorial Services. <a href="https://doi.org/10.68337/978-81-686998-2-3">doi</a></li>
+  </ul>
+
+  <h2>Honest limits</h2>
+  <p class="honest">The evaluation uses 200 synthetic customers and constructed scenarios. It shows the mechanisms work as designed. It does not measure how common these failures are in real deployments, which is what the checkup is meant to start collecting, anonymously. The reference gateway is for study and testing, not a production security boundary.</p>
+
+  <footer>
+    By Harshavardhan Peddireddy, Senior Member, IEEE. MIT license.
+    <a href="https://github.com/harshavardhan008/privacy-accountability-stack">Source</a> &middot;
+    <a href="https://github.com/harshavardhan008/privacy-accountability-stack/releases/tag/v0.1.0">Release v0.1.0</a>
+  </footer>
+</div>
+</body>
+</html>

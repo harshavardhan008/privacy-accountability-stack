@@ -24,6 +24,11 @@ The first publication defined the stack for training-time data. This repository 
 | [`agent-privacy-clinic/`](agent-privacy-clinic/) | Checkup tool. A five-check readiness scorecard, a printable checklist, and the method for running it as an anonymous survey. |
 | [`docs/`](docs/) | The stack explained, and the publication list. |
 
+## Try it in the browser
+
+* **Live demo:** https://harshavardhan008.github.io/privacy-accountability-stack/demo/ runs the real code in your browser on synthetic data.
+* **Agent Privacy Clinic:** https://harshavardhan008.github.io/privacy-accountability-stack/agent-privacy-clinic/
+
 ## Quick start
 
 ```bash
