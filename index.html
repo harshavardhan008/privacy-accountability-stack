@@ -21,8 +21,7 @@ h1{font-size:clamp(34px,6vw,60px);line-height:1.08;margin:10px 0 12px}
 .idea{margin:26px 0 0;max-width:780px;font-size:19px}
 .idea strong{color:var(--cyan)}
 h2{font-size:24px;margin:44px 0 14px}
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-@media(max-width:860px){.cards{grid-template-columns:1fr}}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
 .card{display:block;background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:22px;text-decoration:none;color:var(--text);transition:border-color .15s,transform .15s}
 .card:hover{border-color:var(--cyan);transform:translateY(-2px)}
 .card h3{margin:0 0 6px;font-size:20px}
@@ -63,6 +62,11 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em}
       <h3>Agent Privacy Clinic</h3>
       <p>A one-minute, anonymous checkup. Five yes or no questions about one AI agent that touches personal data.</p>
       <span class="go">Take the checkup &rarr;</span>
+    </a>
+    <a class="card" href="agent-privacy-clinic/exam/">
+      <h3>Clinic Exam</h3>
+      <p>Same leak attacks against four agents, with confidence intervals. See what the gateway stops, what a text scanner stops, and what still gets through.</p>
+      <span class="go">Run the exam &rarr;</span>
     </a>
     <a class="card" href="https://github.com/harshavardhan008/privacy-accountability-stack">
       <h3>Code and docs</h3>

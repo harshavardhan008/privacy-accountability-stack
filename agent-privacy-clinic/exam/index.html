@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clinic Exam | Privacy Accountability Stack</title>
+<meta name="description" content="Run the same leak attacks against an unguarded AI agent, a text-scanner agent, and agents behind a purpose gateway. Runs in your browser on synthetic data.">
+<style>
+:root{--bg:#07131f;--panel:#0d2238;--edge:#1c3a57;--text:#eaf2fa;--mute:#9db3c8;--cyan:#2de2c0;--blue:#3b82f6;--amber:#f5b942;--red:#ff6b6b;--violet:#a78bfa}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--cyan)}
+header,main,footer{max-width:1100px;margin:0 auto;padding:0 20px}
+header{padding-top:28px}
+.back{font-size:14px;text-decoration:none}
+h1{font-size:clamp(28px,4vw,40px);line-height:1.15;margin:14px 0 8px}
+h2{font-size:21px;margin:34px 0 10px}
+.lead{color:var(--mute);max-width:780px;margin:0 0 6px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.pill{border:1px solid var(--edge);border-radius:999px;padding:3px 12px;font-size:13px;color:var(--mute)}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:18px 0}
+button,select{font:inherit;border-radius:10px;border:1px solid var(--edge);background:var(--panel);color:var(--text);padding:9px 14px}
+button{cursor:pointer}
+button.primary{background:var(--cyan);color:#05211c;border-color:var(--cyan);font-weight:600}
+button:disabled{opacity:.5;cursor:not-allowed}
+button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+#status{color:var(--mute);font-size:14px}
+.card{background:var(--panel);border:1px solid var(--edge);border-radius:14px;padding:18px 20px;margin:14px 0}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;color:var(--mute);margin:6px 0 10px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.row{display:grid;grid-template-columns:200px 1fr;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--edge)}
+.row:first-of-type{border-top:0}
+@media(max-width:700px){.row{grid-template-columns:1fr}}
+.name{font-size:15px}
+.bars{display:grid;gap:5px}
+.b{display:grid;grid-template-columns:1fr 150px;gap:8px;align-items:center}
+.track{position:relative;height:14px;background:#0a1b2d;border-radius:7px;overflow:hidden}
+.fill{position:absolute;left:0;top:0;bottom:0;border-radius:7px}
+.ci{position:absolute;top:5px;height:4px;background:rgba(255,255,255,.75);border-radius:2px}
+.val{font:12.5px ui-monospace,Menlo,Consolas,monospace;color:var(--mute)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:#0a1b2d;border:1px solid var(--edge);border-radius:12px;padding:12px 14px}
+.stat .n{font-size:28px;font-weight:700;line-height:1.1}
+.stat .l{font-size:13px;color:var(--mute);margin-top:2px}
+.note{background:#0a1b2d;border-left:3px solid var(--cyan);padding:10px 14px;border-radius:6px;font-size:15px;margin:12px 0}
+.warn{border-left-color:var(--amber)}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+td,th{text-align:left;padding:7px 8px;border-bottom:1px solid var(--edge);vertical-align:top}
+th{color:var(--mute);font-size:12.5px;text-transform:uppercase;letter-spacing:.05em}
+td.num{font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap}
+.tablewrap{overflow-x:auto}
+textarea{width:100%;height:140px;background:#06101a;color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:8px;font:12.5px ui-monospace,Menlo,Consolas,monospace}
+footer{padding:28px 20px 48px;color:var(--mute);font-size:14px}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="../">&larr; Agent Privacy Clinic</a>
+  <h1>The Clinic Exam</h1>
+  <p class="lead">The checkup asks people. The exam tests agents. It sends the same leak attacks to four agents and shows what each one lets through, with honest error bars, and what still gets past the gateway.</p>
+  <div class="pills">
+    <span class="pill">All data is synthetic</span>
+    <span class="pill">Runs in your browser</span>
+    <span class="pill">Loads the Python runtime from cdn.jsdelivr.net</span>
+  </div>
+  <div class="bar">
+    <label for="n">Synthetic customers</label>
+    <select id="n"><option>25</option><option selected>50</option><option>100</option></select>
+    <button class="primary" id="run" disabled>Run the exam</button>
+    <span id="status" role="status" aria-live="polite">Loading the Python runtime. This takes a few seconds.</span>
+  </div>
+</header>
+<main id="out" hidden>
+  <div class="card">
+    <div class="stats" id="stats"></div>
+    <div class="note" id="headline"></div>
+  </div>
+
+  <h2>Attack success rate by leak</h2>
+  <p class="lead">Lower is better. The white line on each bar is the 95% Wilson interval.</p>
+  <div class="card">
+    <div class="legend" id="legend"></div>
+    <div id="leaks"></div>
+  </div>
+
+  <h2>What still gets past the gateway</h2>
+  <p class="lead">These are reported, not hidden. Success rate for each agent, higher means the attack worked.</p>
+  <div class="card tablewrap"><table id="limits"></table>
+    <div class="note warn" id="limitnote"></div>
+  </div>
+
+  <h2>Accountability and legitimate work</h2>
+  <div class="card" id="acct"></div>
+
+  <h2>How to read this honestly</h2>
+  <div class="card">
+    <p>These probes were written by the author of the gateway, and each trial changes the synthetic customer, not the mechanism. The intervals describe this test set. They say nothing about how common these failures are in real deployments. The exam shows that the controls do what they claim and where they stop, which is what a reviewer needs to judge them. The checkup is how the real-world numbers get collected.</p>
+    <p>The text scanner is a deliberately simple baseline (emails and phone numbers). A scanner with name recognition would catch more, though it would still not know whose data it is or what the purpose was.</p>
+  </div>
+
+  <h2>Markdown report</h2>
+  <div class="card"><textarea id="md" readonly aria-label="Markdown report"></textarea>
+    <div class="bar"><button id="copy">Copy</button></div></div>
+</main>
+<footer>
+  Part of the <a href="../../">Privacy Accountability Stack</a>.
+  Source: <a href="https://github.com/harshavardhan008/privacy-accountability-stack/tree/main/agent-privacy-clinic/clinic_exam">clinic_exam</a>.
+  Method and framework mappings: <a href="https://github.com/harshavardhan008/privacy-accountability-stack/blob/main/docs/FRAMEWORK_MAPPING.md">FRAMEWORK_MAPPING.md</a>.
+</footer>
+<script>
+const PYODIDE = "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/";
+const AAR = ["__init__.py","consent.py","gateway.py","ledger.py","record.py","lineage.py","ladder.py"];
+const EXAM = ["__init__.py","stats.py","targets.py","probes.py","runner.py","report.py","web.py"];
+const WHO = [["unguarded","Unguarded agent","#ff6b6b"],["scanner","Text scanner only","#f5b942"],["guarded","Behind the gateway","#2de2c0"],["layered","Gateway plus scanner","#a78bfa"]];
+let run = null;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pct = x => (x*100).toFixed(1) + "%";
+const ci = r => `${pct(r.rate)} (${pct(r.lo)} to ${pct(r.hi)})`;
+
+function bars(obj){
+  return `<div class="bars">` + WHO.map(([k,label,col]) => {
+    const r = obj[k];
+    return `<div class="b"><div class="track" role="img" aria-label="${esc(label)} ${pct(r.rate)}">
+      <div class="fill" style="width:${r.rate*100}%;background:${col}"></div>
+      <div class="ci" style="left:${r.lo*100}%;width:${Math.max(0.5,(r.hi-r.lo)*100)}%"></div></div>
+      <div class="val">${ci(r)}</div></div>`;
+  }).join("") + `</div>`;
+}
+
+function show(d){
+  const res = d.res, a = res.attack;
+  $("stats").innerHTML = WHO.map(([k,label,col]) =>
+    `<div class="stat"><div class="n" style="color:${col}">${pct(a[k].rate)}</div><div class="l">${esc(label)}<br>attacks succeed</div></div>`).join("");
+  $("headline").textContent = `${res.customers} synthetic customers, ${res.trials_per_target} trials per agent. Behind the gateway, ${a.guarded.k} of ${a.guarded.n} structural attacks succeeded, against ${a.unguarded.k} of ${a.unguarded.n} for the unguarded agent. The text scanner alone stopped ${a.unguarded.k - a.scanner.k} of them: it only cleans emails and phone numbers in outgoing text, and these attacks expose other data or never go through text at all.`;
+  $("legend").innerHTML = WHO.map(([k,label,col]) => `<span><span class="sw" style="background:${col}"></span>${esc(label)}</span>`).join("");
+  $("leaks").innerHTML = Object.values(res.by_leak).map(v => `<div class="row"><div class="name">${esc(v.label)}</div>${bars(v)}</div>`).join("");
+  const kl = res.probes.filter(p => p.kind === "known_limit");
+  $("limits").innerHTML = `<tr><th>Attack</th>${WHO.map(w => `<th>${esc(w[1])}</th>`).join("")}</tr>` +
+    kl.map(p => `<tr><td>${esc(p.id)} ${esc(p.title)}</td>${WHO.map(w => `<td class="num">${pct(p[w[0]].rate)}</td>`).join("")}</tr>`).join("");
+  $("limitnote").textContent = "Redaction matches exact values, so disguised, split, or carried-over copies escape it, and the gateway trusts the Purpose Pass it is given. A pattern scanner catches an obvious format the gateway never saw (K6) and misses the rest. The lesson: minimize upstream so the agent never holds data it does not need, and treat output redaction as a last line.";
+  const b = res.benign_success, rec = res.records;
+  $("acct").innerHTML = `<p><strong>Legitimate work still succeeds:</strong> ` + WHO.map(([k,l]) => `${esc(l)} ${pct(b[k].rate)}`).join(", ") + `.</p>` +
+    ["guarded","layered"].map(w => `<p><strong>${esc(WHO.find(x => x[0]===w)[1])}:</strong> ${rec[w].records} Action Records for ${rec[w].attempts} attempted actions (${pct(rec[w].completeness)}), denied ones included. Hash chain verified in ${rec[w].chains_ok} of ${rec[w].chains} runs.</p>`).join("") +
+    `<p>The unguarded and scanner-only agents leave no record.</p>`;
+  $("md").value = d.md;
+  $("out").hidden = false;
+}
+
+async function boot(){
+  try{
+    await new Promise((ok, bad) => { const s = document.createElement("script"); s.src = PYODIDE + "pyodide.js"; s.onload = ok; s.onerror = () => bad(new Error("Could not load the Python runtime from cdn.jsdelivr.net")); document.head.appendChild(s); });
+    const py = await loadPyodide({indexURL: PYODIDE});
+    const root = new URL("../../", location.href);
+    py.FS.mkdirTree("/home/pyodide/aar"); py.FS.mkdirTree("/home/pyodide/clinic_exam");
+    const get = async u => { const r = await fetch(u); if (!r.ok) throw new Error("Could not load " + u); return r.text(); };
+    const files = await Promise.all([
+      ...AAR.map(async f => [`/home/pyodide/aar/${f}`, await get(new URL("agent-action-record/src/aar/" + f, root))]),
+      ...EXAM.map(async f => [`/home/pyodide/clinic_exam/${f}`, await get(new URL("agent-privacy-clinic/clinic_exam/" + f, root))]),
+      get(new URL("agent-action-record/examples/shared.py", root)).then(t => ["/home/pyodide/demo_shared.py", t])
+    ]);
+    files.forEach(([p, t]) => py.FS.writeFile(p, t));
+    py.runPython("import sys\nif '/home/pyodide' not in sys.path: sys.path.insert(0,'/home/pyodide')\nfrom clinic_exam import web");
+    run = py.pyimport("clinic_exam.web").run;
+    $("status").textContent = "Ready."; $("run").disabled = false;
+  }catch(e){ $("status").textContent = "Could not start: " + e.message; }
+}
+$("run").onclick = () => {
+  $("run").disabled = true; $("status").textContent = "Running...";
+  setTimeout(() => { try{ show(JSON.parse(run($("n").value, "2026"))); $("status").textContent = "Done."; }catch(e){ $("status").textContent = "Error: " + e.message; } $("run").disabled = false; }, 30);
+};
+$("copy").onclick = () => navigator.clipboard.writeText($("md").value).then(() => $("status").textContent = "Copied.");
+boot();
+</script>
+</body>
+</html>

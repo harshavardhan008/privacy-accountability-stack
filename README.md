@@ -21,13 +21,14 @@ The first publication defined the stack for training-time data. This repository 
 | Module | What it is |
 |---|---|
 | [`agent-action-record/`](agent-action-record/) | Runtime module. A reference implementation of the Purpose Pass, a purpose gateway, Action Lineage, the Action Record, a tamper-evident ledger, and a graduation ladder. Python, standard library only, 42 tests. |
-| [`agent-privacy-clinic/`](agent-privacy-clinic/) | Checkup tool. A five-check readiness scorecard, a printable checklist, and the method for running it as an anonymous survey. |
+| [`agent-privacy-clinic/`](agent-privacy-clinic/) | Checkup and exam. A five-check readiness scorecard with a survey method, and the Clinic Exam, which runs leak attacks against an unguarded agent, a text-scanner agent, and agents behind the gateway, with confidence intervals. |
 | [`docs/`](docs/) | The stack explained, and the publication list. |
 
 ## Try it in the browser
 
 * **Live demo:** https://harshavardhan008.github.io/privacy-accountability-stack/demo/ runs the real code in your browser on synthetic data.
-* **Agent Privacy Clinic:** https://harshavardhan008.github.io/privacy-accountability-stack/agent-privacy-clinic/
+* **Agent Privacy Clinic checkup:** https://harshavardhan008.github.io/privacy-accountability-stack/agent-privacy-clinic/
+* **Clinic Exam:** https://harshavardhan008.github.io/privacy-accountability-stack/agent-privacy-clinic/exam/
 
 ## Quick start
 
@@ -39,6 +40,10 @@ python examples/loyalty_points_demo.py
 ```
 
 The demo runs a support agent that fixes missing loyalty points. It shows the purpose gateway releasing only the fields the purpose needs, denying a purpose-widening request, and writing an Action Record for every step.
+
+## Related work
+
+Red-team tools such as [finleak](https://github.com/vasukoduri/finleak) test from outside whether a model leaks data. This repository controls from inside what an agent may access, for what purpose, and records it. The Clinic Exam borrows the idea of measuring leakage with attack probes and confidence intervals, and applies it to those controls.
 
 ## Evidence and limits
 

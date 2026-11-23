@@ -17,3 +17,5 @@ jobs:
       - run: pip install -e ".[dev]"
       - run: pytest -q
       - run: python examples/loyalty_points_demo.py
+      - run: pytest -q
+        working-directory: agent-privacy-clinic
